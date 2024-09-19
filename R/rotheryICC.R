@@ -1,4 +1,4 @@
-#' Round figures nicely
+#' Rothery's rank-based intraclass correlation
 #'
 #' This function computes a rank-based intraclass correlation per Rothery (1979).
 #' The normal approximation is used to estimate the variance and the p-value,

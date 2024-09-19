@@ -2,7 +2,7 @@
 % Please edit documentation in R/rotheryICC.R
 \name{rotheryICC}
 \alias{rotheryICC}
-\title{Round figures nicely}
+\title{Rothery's rank-based intraclass correlation}
 \usage{
 rotheryICC(df, var, id)
 }
