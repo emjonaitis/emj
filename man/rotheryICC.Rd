@@ -14,7 +14,7 @@ rotheryICC(df, var, id)
 \item{id}{Column containing the cluster identifier.}
 }
 \value{
-Data frame containing point estimate, standard error, 95% CI, and p-value of Rothery's ICC.
+Data frame containing point estimate on native (r_c) and linear (rho) scales, standard error, 95% CI, and p-value of Rothery's ICC.
 }
 \description{
 This function computes a rank-based intraclass correlation per Rothery (1979).
