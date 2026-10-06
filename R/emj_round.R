@@ -8,11 +8,18 @@
 #' @import magrittr
 #' @export
 
-emj_round <- function(number) {
+emj_round <- function(number, ll=NULL) {
   options(scipen=99)
   df     <- data.frame(number) %>%
     mutate(index=c(1:n()), isNA=is.na(number))
-  df.num <- filter(df, isNA==FALSE & number!=0) 
+  if (is.null(ll)) {
+    df.num <- filter(df, isNA==FALSE & number!=0) 
+  } else {
+    df.num   <- filter(df, isNA==FALSE & number!=0 & number >= ll) 
+    df.ll    <- filter(df, isNA==FALSE & number!=0 & number < ll) %>%
+                mutate(out = paste0("<", ll)) %>%
+                dplyr::select(index, out)
+  }
   if (nrow(df.num)>0) {
     df.num <- df.num %>%
               mutate(d = 2+I(log10(abs(number))<0)*as.integer(abs(log10(abs(number)))),
@@ -27,7 +34,12 @@ emj_round <- function(number) {
   df.zero <- filter(df, number==0) %>%
     mutate(out = "0") %>%
     dplyr::select(index, out)
-  df     <- rbind(df.na, df.num, df.zero) %>%
-    merge(df, .)
+  if (is.null(ll)) {
+    df     <- rbind(df.na, df.num, df.zero) %>%
+              merge(df, .)
+  } else {
+    df     <- rbind(df.na, df.num, df.zero, df.ll) %>%
+              merge(df, .)
+  }
   return(df$out)
 }
