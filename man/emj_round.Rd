@@ -4,10 +4,12 @@
 \alias{emj_round}
 \title{Round nicely}
 \usage{
-emj_round(number)
+emj_round(number, ll = NULL)
 }
 \arguments{
 \item{number}{Number to round.}
+
+\item{ll}{Lower bound. Below this, the number will be formatted as left-censored, e.g. "<.0001". Note: should only be used for fields with a lower limit of 0.}
 }
 \description{
 This function takes in a number or vector of numbers and rounds it to two decimal 

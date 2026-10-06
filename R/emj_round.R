@@ -4,6 +4,7 @@
 #' places for large numbers, or two significant figures for small ones.
 #' It returns a string or vector of strings.
 #' @param number Number to round.
+#' @param ll Lower bound. Below this, the number will be formatted as left-censored, e.g. "<.0001". Note: should only be used for fields with a lower limit of 0.
 #' @import dplyr 
 #' @import magrittr
 #' @export
