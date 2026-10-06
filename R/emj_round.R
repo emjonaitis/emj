@@ -4,23 +4,17 @@
 #' places for large numbers, or two significant figures for small ones.
 #' It returns a string or vector of strings.
 #' @param number Number to round.
-#' @param ll Lower bound. Below this, the number will be formatted as left-censored, e.g. "<.0001". Note: should only be used for fields with a lower limit of 0.
+#' @param lb Lower bound. An entry whose absolute value is below this limit will be handled separately.
+#' @param censor Governs the behavior of the lb parameter. If TRUE, absolute values below the lower bound will be formatted as left-censored (e.g., "<.0001"). If FALSE, values below the lower bound will be rounded to 0. When no lower bound is specified, censor=TRUE has no effect.
 #' @import dplyr 
 #' @import magrittr
 #' @export
 
-emj_round <- function(number, ll=NULL) {
+emj_round <- function(number, lb=0, censor=FALSE) {
   options(scipen=99)
   df     <- data.frame(number) %>%
-    mutate(index=c(1:n()), isNA=is.na(number))
-  if (is.null(ll)) {
-    df.num <- filter(df, isNA==FALSE & number!=0) 
-  } else {
-    df.num   <- filter(df, isNA==FALSE & number!=0 & number >= ll) 
-    df.ll    <- filter(df, isNA==FALSE & number!=0 & number < ll) %>%
-                mutate(out = paste0("<", ll)) %>%
-                dplyr::select(index, out)
-  }
+            mutate(index=c(1:n()), isNA=is.na(number))
+  df.num   <- filter(df, isNA==FALSE & abs(number) > lb) 
   if (nrow(df.num)>0) {
     df.num <- df.num %>%
               mutate(d = 2+I(log10(abs(number))<0)*as.integer(abs(log10(abs(number)))),
@@ -30,17 +24,19 @@ emj_round <- function(number, ll=NULL) {
               dplyr::select(index, out)
   }
   df.na  <- filter(df, isNA==TRUE) %>%
-    mutate(out = "") %>%
-    dplyr::select(index, out)
-  df.zero <- filter(df, number==0) %>%
-    mutate(out = "0") %>%
-    dplyr::select(index, out)
-  if (is.null(ll)) {
-    df     <- rbind(df.na, df.num, df.zero) %>%
-              merge(df, .)
+            mutate(out = "") %>%
+            dplyr::select(index, out)
+  if (censor==TRUE & lb>0) {
+    df.zero <- filter(df, abs(number)<=lb) %>%
+               mutate(out = paste0("<", lb)) %>%
+               dplyr::select(index, out)
+    
   } else {
-    df     <- rbind(df.na, df.num, df.zero, df.ll) %>%
-              merge(df, .)
+    df.zero <- filter(df, abs(number)<=lb) %>%
+               mutate(out = "0") %>%
+               dplyr::select(index, out)
   }
+  df        <- rbind(df.na, df.num, df.zero) %>%
+               merge(df, .)
   return(df$out)
 }

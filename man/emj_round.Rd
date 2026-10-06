@@ -4,12 +4,14 @@
 \alias{emj_round}
 \title{Round nicely}
 \usage{
-emj_round(number, ll = NULL)
+emj_round(number, lb = 0, censor = FALSE)
 }
 \arguments{
 \item{number}{Number to round.}
 
-\item{ll}{Lower bound. Below this, the number will be formatted as left-censored, e.g. "<.0001". Note: should only be used for fields with a lower limit of 0.}
+\item{lb}{Lower bound. An entry whose absolute value is below this limit will be handled separately.}
+
+\item{censor}{Governs the behavior of the lb parameter. If TRUE, absolute values below the lower bound will be formatted as left-censored (e.g., "<.0001"). If FALSE, values below the lower bound will be rounded to 0. When no lower bound is specified, censor=TRUE has no effect.}
 }
 \description{
 This function takes in a number or vector of numbers and rounds it to two decimal 
